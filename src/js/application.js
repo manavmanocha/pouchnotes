@@ -1,3 +1,5 @@
+var remoteDBURL = "http://127.0.0.1:5984";
+
 var builddate, buildtime, buttonmenu, editbutton, 
 delbutton, hashchanger, 
 pn, PouchNotesObj, showview, svhandler, viewnotes, searchnotes; 
@@ -409,7 +411,7 @@ PouchNotesObj.prototype.search = function(searchkey) {
 
 
 /*------ Maybe do in a try-catch ? ------*/
-pn = new PouchNotesObj('pouchnotes', 'http://127.0.0.1:5984');
+pn = new PouchNotesObj('pouchnotes', remoteDBURL);
 
 pn.formobject = document.getElementById('noteform');
 pn.notetable  = document.getElementById('notelist');
