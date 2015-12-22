@@ -1,4 +1,5 @@
 var remoteDBURL = "https://dls-builder:Compro11@dls-builder.cloudant.com";
+//var remoteDBURL = "http://127.0.0.1:5984";
 
 var builddate, buildtime, buttonmenu, editbutton, 
 delbutton, hashchanger, 
@@ -124,7 +125,8 @@ PouchNotesObj.prototype.savenote = function () {
     o.notetitle = (this.formobject.notetitle.value == '') ? 'Untitled Note' : this.formobject.notetitle.value;
     o.note      = (this.formobject.note.value == '') ? '' : this.formobject.note.value;
     o.tags      = (this.formobject.tags.value == '') ? '' : this.formobject.tags.value;
-    o.modified  = new Date().getTime();
+    o.tags      = (this.formobject.tags.value == '') ? '' : this.formobject.tags.value;
+    o.category  = (this.formobject.category.value == '') ? '' : this.formobject.category.value;
     
     this.pdb.put(o, function (error, response) {
         if(error){
@@ -277,8 +279,14 @@ PouchNotesObj.prototype.syncnoteset = function (start, end) {
     
     var i, 
     that = this, 
+
+    // filter: function (doc) {
+    //         return doc.category === 'MyNotes';
+    //     }    
     
-    options = {};
+    options = {
+        "doc_ids":["1450779769685"]
+    };
      
         
     //options.include_docs = true;
@@ -286,7 +294,7 @@ PouchNotesObj.prototype.syncnoteset = function (start, end) {
     if(start){ options.startkey = start; }
     if(end){ options.endkey = end; }
     
-    this.pdb.sync(this.remote, options)
+    this.pdb.sync(this.remote, {"doc_ids":["1450779769685"]})
     .on('change', function (info) {
   // handle change
     }).on('paused', function () {
@@ -304,7 +312,8 @@ PouchNotesObj.prototype.syncnoteset = function (start, end) {
       that.show(that.formobject.dataset.show);
       that.hide(that.formobject.dataset.hide);
     }).on('error', function (err) {
-      alert("Sync Error");
+      console.log("Sync Error:" + err);  
+      alert("Sync Error:" + err);
       that.showerror(error);
     });   
     
@@ -347,12 +356,16 @@ PouchNotesObj.prototype.addrow = function (obj) {
     td.appendChild(a);
     tr.appendChild(td);
 
-    created = td.cloneNode(false);
+    category = td.cloneNode(false);
+    category.innerHTML = obj.doc.category;
+
+    created = category.cloneNode(false);
     created.innerHTML = this.builddate(+obj.id) + this.buildtime(+obj.id);
       
     updated = created.cloneNode();
     updated.innerHTML = obj.doc.modified ? this.builddate(+obj.doc.modified) + this.buildtime(+obj.doc.modified) : this.builddate(+obj.id) + this.buildtime(+obj.id);
     
+    tr.appendChild(category);
     tr.appendChild(created);
     tr.appendChild(updated);
   
@@ -404,7 +417,7 @@ PouchNotesObj.prototype.search = function(searchkey) {
 
 
 /*------ Maybe do in a try-catch ? ------*/
-pn = new PouchNotesObj('pouchnotes', remoteDBURL);
+pn = new PouchNotesObj('pouchnotesmanav', remoteDBURL);
 
 pn.formobject = document.getElementById('noteform');
 pn.notetable  = document.getElementById('notelist');

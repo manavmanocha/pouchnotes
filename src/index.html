@@ -26,6 +26,13 @@
                 <button class="clicktarget delete" type="button">Delete Note</button>
             </div>
             <p>
+                <label>Category</label>
+                <select name="category">
+                  <option value="MyNotes">MyNotes</option>
+                  <option value="GroupNotes">GroupNotes</option>
+                </select>
+            </p>
+            <p>
                 <input type="hidden" id="_rev" name="_rev" value="">
                 <input type="hidden" id="_id"  name="_id" value="">
                 <label for="notetitle">Title:</label>
@@ -40,6 +47,9 @@
                 <input type="text" id="tags" name="tags">
                 <span class="guidance">Separate tags with a comma</span>
             </p>
+
+            
+            
             
             <p class="rel">
                 <input type="file" id="attachment" name="attachment" class="abs">
@@ -73,6 +83,7 @@
                 <thead>
                     <tr>
                         <th>Title</th>
+                        <th>Category</th>
                         <th>Created</th>
                         <th>Updated</th>
                     </tr>
