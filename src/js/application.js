@@ -274,6 +274,7 @@ PouchNotesObj.prototype.viewnoteset = function (start, end) {
 TO DO: refactor so we can reuse this function.
 */
 PouchNotesObj.prototype.syncnoteset = function (start, end) {
+    var start = new Date().getTime();
     document.getElementById("syncbutton").innerHTML = "Syncing...";
     document.getElementById("loadingImage").style.display = "block";
     
@@ -311,6 +312,8 @@ PouchNotesObj.prototype.syncnoteset = function (start, end) {
       that.formobject.reset();    
       that.show(that.formobject.dataset.show);
       that.hide(that.formobject.dataset.hide);
+      var end = new Date().getTime();
+      console.log("Time Taken - " + (end - start) + " ms");
     }).on('error', function (err) {
       console.log("Sync Error:" + err);  
       alert("Sync Error:" + err);
@@ -370,6 +373,37 @@ PouchNotesObj.prototype.addrow = function (obj) {
     tr.appendChild(updated);
   
     return tr;    
+}
+
+PouchNotesObj.prototype.addbulknotes = function () {
+    document.getElementById("loadingImage").style.display = "block";
+    var that = this;
+    var start = 1001;
+    var end = 2000;
+    var docs = [];
+    for (var i = start; i <= end; i++) {
+        docs.push({
+            "notetitle": "note title " + i,
+            "note": "note description " + i,
+            "tags": i,
+            "category": "category " + i,
+            "_id" : new Date().getTime() + i + ""
+        });
+    }
+
+    this.pdb.bulkDocs(docs).then(function (result) {
+      doAfterAddbulkNotes();
+    }).catch(function (err) {
+      doAfterAddbulkNotes();
+    });   
+
+    function doAfterAddbulkNotes() {
+        document.getElementById("loadingImage").style.display = "none";
+        that.viewnoteset();
+        that.formobject.reset();    
+        that.show(that.formobject.dataset.show);
+        that.hide(that.formobject.dataset.hide); 
+    }
 }
 
 
