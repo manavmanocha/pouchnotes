@@ -283,11 +283,11 @@ PouchNotesObj.prototype.syncnoteset = function (start, end) {
 
     // filter: function (doc) {
     //         return doc.category === 'MyNotes';
-    //     }    
+    //     } 
+
+    //"doc_ids":["1450779769685"]   
     
-    options = {
-        "doc_ids":["1450779769685"]
-    };
+    options = {};
      
         
     //options.include_docs = true;
@@ -295,7 +295,7 @@ PouchNotesObj.prototype.syncnoteset = function (start, end) {
     if(start){ options.startkey = start; }
     if(end){ options.endkey = end; }
     
-    this.pdb.sync(this.remote, {"doc_ids":["1450779769685"]})
+    this.pdb.sync(this.remote, options)
     .on('change', function (info) {
   // handle change
     }).on('paused', function () {
@@ -378,15 +378,15 @@ PouchNotesObj.prototype.addrow = function (obj) {
 PouchNotesObj.prototype.addbulknotes = function () {
     document.getElementById("loadingImage").style.display = "block";
     var that = this;
-    var start = 1001;
-    var end = 2000;
+    var start = 1;
+    var end = 1000;
     var docs = [];
     for (var i = start; i <= end; i++) {
         docs.push({
             "notetitle": "note title " + i,
             "note": "note description " + i,
             "tags": i,
-            "category": "category " + i,
+            "category": "MyNotes",
             "_id" : new Date().getTime() + i + ""
         });
     }
