@@ -1,25 +1,8 @@
-var remoteDBURL = "http://127.0.0.1:5984";
+var remoteDBURL = "https://dls-builder:Compro11@dls-builder.cloudant.com";
 
 var builddate, buildtime, buttonmenu, editbutton, 
 delbutton, hashchanger, 
-pn, PouchNotesObj, showview, svhandler, viewnotes, searchnotes; 
-
-var defaultNotes = [{
-   "_id": "1450691947400",
-   "_rev": "6-fef384b1a32c4128088a1751ef387e83",
-   "notetitle": "raman's note update 3rd",
-   "note": "raman 1st note",
-   "tags": "1",
-   "modified": 1450702482985
-},
-{
-   "_id": "1450691954922",
-   "_rev": "3-8363f4a215a8734d5cd7f03c2e8b61e0",
-   "notetitle": "2",
-   "note": "2",
-   "tags": "2",
-   "modified": 1450691954922
-}] 
+n, PouchNotesObj, showview, svhandler, viewnotes, searchnotes; 
 
 viewnotes   = document.querySelector('[data-show="#allnotes"]');
 buttonmenu = document.getElementById('buttonwrapper');
@@ -289,6 +272,9 @@ PouchNotesObj.prototype.viewnoteset = function (start, end) {
 TO DO: refactor so we can reuse this function.
 */
 PouchNotesObj.prototype.syncnoteset = function (start, end) {
+    document.getElementById("syncbutton").innerHTML = "Syncing...";
+    document.getElementById("loadingImage").style.display = "block";
+    
     var i, 
     that = this, 
     
@@ -310,9 +296,16 @@ PouchNotesObj.prototype.syncnoteset = function (start, end) {
     }).on('denied', function (info) {
       // a document failed to replicate, e.g. due to permissions
     }).on('complete', function (info) {
-      // handle complete
+      console.log("Sync Complete");
+      document.getElementById("syncbutton").innerHTML = "Sync Notes";
+      document.getElementById("loadingImage").style.display = "none";
+      that.viewnoteset();
+      that.formobject.reset();    
+      that.show(that.formobject.dataset.show);
+      that.hide(that.formobject.dataset.hide);
     }).on('error', function (err) {
-      // handle error
+      alert("Sync Error");
+      that.showerror(error);
     });   
     
 }

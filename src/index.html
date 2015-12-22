@@ -2,27 +2,21 @@
 <html lang="en-us">
 <head>
 	<meta charset="utf-8" />
-	<title>Build a Note Taking Application With PouchDB
+	<title>Sample Notes Application With PouchDB
 </title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
     
     <header>
-        <h1>Build a Note Taking Application With PouchDB</h1>
-        <nav>
-            <a href="http://www.sitepoint.com/building-offline-first-app-pouchdb/" target="_blank">Read the article</a>
-            <a href="https://github.com/webinista/PouchNotes" target="_blank">View the repo</a>
-            <a href="http://pouchdb.com/" target="_blank">Download PouchDB</a>
-        </nav>
+        <h1>Sample Notes Application With PouchDB</h1>        
     </header>
     
     <main>
         <p class="rel">
             <button class="clicktarget" type="button" data-action="viewnoteset" data-show="#allnotes" data-hide="section:not(#allnotes)">View Notes</button>
         	<button class="clicktarget" type="button" data-show="#addnote" data-hide="section:not(#addnote)">Add Note</button>
-            <button class="clicktarget" type="button" data-action="syncnoteset" data-hide="section:not(#addnote)">Sync Notes</button>
-             <button class="clicktarget" type="button" data-action="adddefaultnoteset" data-hide="section:not(#addnote)">Add Default Notes</button>
+            <button id="syncbutton" class="clicktarget" type="button" data-action="syncnoteset" data-hide="section:not(#addnote)">Sync Notes</button>            
         </p>
         
         <section id="addnote">
@@ -63,9 +57,9 @@
             </p>
         </form>
        </section>
-        
+        <img style="display:none" id="loadingImage" src="img/loading.gif"></img>
         <section id="allnotes" class="hide">
-            <h2>Recent notes</h2>
+            <h2>Recent notes</h2>            
             <form id="searchnotes" method="get">
                 <p>
                     <label for="q">Search</label> 
