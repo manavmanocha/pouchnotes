@@ -1,5 +1,6 @@
 var remoteDBURL = "https://dls-builder:Compro11@dls-builder.cloudant.com";
 //var remoteDBURL = "http://127.0.0.1:5984";
+var databasename = "pouchnotesdummy";
 
 var builddate, buildtime, buttonmenu, editbutton, 
 delbutton, hashchanger, 
@@ -25,7 +26,9 @@ PouchNotesObj = function (databasename, remoteorigin) {
     Object.defineProperty(this, 'notetable', {writable: true});
  	Object.defineProperty(this, 'searchformobject', {writable: true});
  	Object.defineProperty(this, 'errordialog', {writable: true});
+    Object.defineProperty(this, 'dbname', {writable: true});
 
+    this.dbname = databasename;
     this.pdb = new PouchDB(databasename);
     this.remote = remoteorigin + '/'+databasename;
 
@@ -246,8 +249,13 @@ PouchNotesObj.prototype.viewnoteset = function (start, end) {
     
     if(start){ options.startkey = start; }
     if(end){ options.endkey = end; }
+
+    function map(doc) {
+      // sort by notetitle
+      emit(doc.notetitle);
+    }
     
-    this.pdb.allDocs(options, function (error, response) {
+    this.pdb.query(map, {include_docs: true}, function (error, response) {
     	/* 
     	What's `this` changes when a function is called
     	with map. That's why we're passing `that`.
@@ -271,7 +279,7 @@ PouchNotesObj.prototype.viewnoteset = function (start, end) {
 }
 
 /* 
-TO DO: refactor so we can reuse this function.
+TO DO: sync notes.
 */
 PouchNotesObj.prototype.syncnoteset = function (start, end) {
     var start = new Date().getTime();
@@ -287,7 +295,10 @@ PouchNotesObj.prototype.syncnoteset = function (start, end) {
 
     //"doc_ids":["1450779769685"]   
     
-    options = {};
+    
+    options = { 
+    doc_ids:['1450853987668']   
+  };
      
         
     //options.include_docs = true;
@@ -295,7 +306,9 @@ PouchNotesObj.prototype.syncnoteset = function (start, end) {
     if(start){ options.startkey = start; }
     if(end){ options.endkey = end; }
     
-    this.pdb.sync(this.remote, options)
+   
+    PouchDB.sync(this.dbname, this.remote,  {doc_id : ['1450853987668'] })
+    //this.pdb.sync(this.remote, { doc_id:['1450853987668'] })
     .on('change', function (info) {
   // handle change
     }).on('paused', function () {
@@ -319,6 +332,25 @@ PouchNotesObj.prototype.syncnoteset = function (start, end) {
       alert("Sync Error:" + err);
       that.showerror(error);
     });   
+    
+}
+
+PouchNotesObj.prototype.resetpouchdb = function (start, end) {
+    document.getElementById("loadingImage").style.display = "block";
+    var start = new Date().getTime();
+    var that = this;
+           
+   
+    this.pdb.destroy().then(function() {
+        that.pdb = new PouchDB(that.dbname);
+        document.getElementById("loadingImage").style.display = "none";        
+         var end = new Date().getTime();
+         console.log("Time Taken to resetpouchdb- " + (end - start) + " ms");
+        that.formobject.reset();
+        that.notetable.getElementsByTagName('tbody')[0].innerHTML='';
+        that.show(that.formobject.dataset.show);
+        that.hide(that.formobject.dataset.hide);
+    });      
     
 }
 
@@ -453,7 +485,7 @@ PouchNotesObj.prototype.search = function(searchkey) {
 
 
 /*------ Maybe do in a try-catch ? ------*/
-pn = new PouchNotesObj('pouchnotesdummy', remoteDBURL);
+pn = new PouchNotesObj(databasename, remoteDBURL);
 
 pn.formobject = document.getElementById('noteform');
 pn.notetable  = document.getElementById('notelist');
